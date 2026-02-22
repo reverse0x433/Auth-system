@@ -9,7 +9,10 @@ A full authentication system built with Flask and PostgreSQL. Project 1 of 6 in 
 - Remember me (persistent session for 30 days)
 - Forgot password with email reset link
 - Password reset with token expiry (1 hour)
-- IP-based rate limiting on login (5 attempts per 5 minutes)
+- IP-based rate limiting on login (5 attempts per 5 minutes, rolling window)
+- Timing attack protection — dummy bcrypt check runs even when email is not found
+- Password reset tokens hashed with bcrypt before storage (raw token only in email)
+- Prevents reuse of old password on reset
 
 ## Tech Stack
 
@@ -83,18 +86,26 @@ Visit `http://localhost:5000/register` in your browser.
 ```sql
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
-    username TEXT UNIQUE NOT NULL,
-    email TEXT UNIQUE NOT NULL,
-    password_hash TEXT NOT NULL
+    username VARCHAR(50) UNIQUE NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW()
 );
 
 CREATE TABLE tokens (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-    token TEXT UNIQUE NOT NULL,
+    token_hash VARCHAR(255) UNIQUE NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
     expires_at TIMESTAMP NOT NULL
 );
+
+CREATE INDEX idx_user_username ON users(username);
+CREATE INDEX idx_user_email ON users(email);
+CREATE INDEX idx_tokens_expiry ON tokens(expires_at);
 ```
+
+> Reset tokens are hashed with bcrypt before being stored — the raw token only ever exists in the email link.
 
 ## Routes
 
