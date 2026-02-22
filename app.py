@@ -214,8 +214,9 @@ def forgot_password():
             body=f"Reset your password: http://localhost:5000/reset-password/{token}"
         )
         mail.send(msg)
-        return render_template("forgot_password.html", success="Reset link sent to your email")
-    return render_template("forgot_password.html")
+        return redirect(f"/reset-password/{token}")
+    return render_template("/forgot_password.html")
 
 if __name__ == "__main__":
     app.run(debug=True)
+
