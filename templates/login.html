@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<h2>Login</h2>
+
+{% if error %}
+<div class="msg error">{{ error }}</div>
+{% endif %}
+
+<form method="POST" action="/login">
+    <label>Email</label>
+    <input type="email" name="email" required>
+
+    <label>Password</label>
+    <input type="password" name="password" required>
+
+    <div class="checkbox-row">
+        <input type="checkbox" name="remember_me" id="remember_me">
+        <label for="remember_me">Remember me</label>
+    </div>
+
+    <button type="submit">Login</button>
+</form>
+
+<div class="links">
+    <a href="/register">Don't have an account? Register</a>
+    <a href="/forgot-password">Forgot password?</a>
+</div>
+{% endblock %}

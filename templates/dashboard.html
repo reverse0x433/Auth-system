@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h2>Dashboard</h2>
+
+
+<div style="margin-top: 20px; display: flex; flex-direction: column; gap: 8px; font-size: 14px; color: #aaa;">
+    <div>Logged in as: <span style="color: #eee;">{{ username }}</span></div>
+    <div>Email: <span style="color: #eee;">{{ email }}</span></div>
+</div>
+
+<div class="links" style="margin-top: 24px;">
+    <a href="/logout">Logout</a>
+</div>
+{% endblock %}
